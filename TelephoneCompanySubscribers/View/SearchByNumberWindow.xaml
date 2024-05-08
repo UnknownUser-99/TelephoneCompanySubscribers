@@ -1,0 +1,23 @@
+﻿<Window x:Class="TelephoneCompanySubscribers.View.SearchByNumberWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TelephoneCompanySubscribers.View"
+        mc:Ignorable="d"
+        Title="" Height="200" Width="400"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        
+        <TextBlock Text="SEARCH BY NUMBER" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Margin="10" />
+
+        <TextBox Grid.Row="1" Text="{Binding PhoneNumber}" FontSize="16" TextAlignment="Center" Margin="10" HorizontalAlignment="Center" Width="200" />
+
+        <Button Grid.Row="2" Content="Найти номер" Command="{Binding SearchByNumberCommand}" Margin="10" HorizontalAlignment="Center" Width="120" FontSize="18" />
+    </Grid>
+</Window>
