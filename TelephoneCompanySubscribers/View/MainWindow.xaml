@@ -35,19 +35,24 @@
             <Button Content="Сортировка" Command="{Binding SortingCommand}" Margin="10" FontSize="18"/>
         </StackPanel>
 
-        <DataGrid ItemsSource="{Binding AbonentsTable}" AutoGenerateColumns="False" Grid.Row="2" Margin="5" IsReadOnly="True" CanUserSortColumns="False" SelectionUnit="Cell" >
+        <DataGrid ItemsSource="{Binding AbonentsTable}" AutoGenerateColumns="False" Grid.Row="2" Margin="5" FontSize="16" IsReadOnly="True" CanUserSortColumns="False" SelectionUnit="Cell" >
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ФИО абонента" Binding="{Binding Path=FullName}" />
-                <DataGridTextColumn Header="Улица" Binding="{Binding Path=Street}" />
-                <DataGridTextColumn Header="Дом" Binding="{Binding Path=Home}" />
-                <DataGridTextColumn Header="Домашний номер" Binding="{Binding Path=HomeNumber}" />
-                <DataGridTextColumn Header="Рабочий номер" Binding="{Binding Path=WorkNumber}" />
-                <DataGridTextColumn Header="Мобильный номер" Binding="{Binding Path=MobileNumber}" />
+                <DataGridTextColumn Header="ФИО абонента" Binding="{Binding Path=FullName}" Width="Auto" />
+                <DataGridTextColumn Header="Улица" Binding="{Binding Path=Street}" Width="*" />
+                <DataGridTextColumn Header="Дом" Binding="{Binding Path=Home}" Width="*" />
+                <DataGridTextColumn Header="Домашний номер" Binding="{Binding Path=HomeNumber}" Width="*" />
+                <DataGridTextColumn Header="Рабочий номер" Binding="{Binding Path=WorkNumber}" Width="*" />
+                <DataGridTextColumn Header="Мобильный номер" Binding="{Binding Path=MobileNumber}" Width="*" />
             </DataGrid.Columns>
         </DataGrid>
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="5" VerticalAlignment="Bottom" HorizontalAlignment="Center">
-            <Button Content="Загрузка данных" Command="{Binding LoadDataCommand}" Margin="10" FontSize="18"/>
+            <Button Content="Отмена фильтрации" Command="{Binding CancelCommand}" Margin="10" FontSize="18"/>
             <Button Content="Поиск по номеру" Command="{Binding SearchByNumberCommand}" Margin="10" FontSize="18"/>
             <Button Content="Список улиц" Command="{Binding ShowStreetsCommand}" Margin="10" FontSize="18"/>
             <Button Content="Выгрузка CSV" Command="{Binding ExportCSVCommand}" Margin="10" FontSize="18"/>

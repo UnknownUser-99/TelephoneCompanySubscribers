@@ -16,7 +16,7 @@ namespace TelephoneCompanySubscribers.ViewModel
     {
         public ICommand SearchByNumberCommand { get; private set; }
 
-        public event Action<AbonentsTable> AbonentsTableUpdated;
+        public event Action AbonentsTableUpdated;
 
         private AbonentsTable abonentsTable;
 
@@ -55,7 +55,7 @@ namespace TelephoneCompanySubscribers.ViewModel
 
         private void UpdateTable()
         {
-            AbonentsTableUpdated(abonentsTable);
+            AbonentsTableUpdated();
         }
     }
 }

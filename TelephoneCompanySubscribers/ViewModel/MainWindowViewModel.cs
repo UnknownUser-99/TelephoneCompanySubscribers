@@ -19,6 +19,7 @@ namespace TelephoneCompanySubscribers.ViewModel
     public class MainWindowViewModel : ViewModelBase
     {
         public ICommand LoadDataCommand { get; private set; }
+        public ICommand CancelCommand { get; private set; }
         public ICommand SortingCommand { get; private set; }
         public ICommand SearchByNumberCommand { get; private set; }
         public ICommand ShowStreetsCommand { get; private set; }
@@ -71,6 +72,7 @@ namespace TelephoneCompanySubscribers.ViewModel
         public MainWindowViewModel()
         {
             LoadDataCommand = new RelayCommand(LoadData);
+            CancelCommand = new RelayCommand(Cancel);
             SortingCommand = new RelayCommand(Sorting);
             SearchByNumberCommand = new RelayCommand(OpenSearchByNumberWindow);
             ShowStreetsCommand = new RelayCommand(OpenStreetsWindow);
@@ -84,20 +86,31 @@ namespace TelephoneCompanySubscribers.ViewModel
 
         private async void LoadData()
         {
-            Database db = new Database();
-
-            List<Abonent> abonents = await db.GetAbonents();
-            Dictionary<int, List<Phone>> phones = await db.GetPhones();
-            Dictionary<int, Street> streets = await db.GetStreets();
-            Dictionary<int, Address> addresses = await db.GetAddresses();
-
-            aTable = new AbonentsTable(abonents, phones, streets, addresses);
-            sTable = new StreetsTable(streets, addresses);
-
-            Application.Current.Dispatcher.Invoke(() =>
+            try
             {
+                Database db = new Database();
+
+                Task<List<Abonent>> abonentsTask = db.GetAbonents();
+                Task<Dictionary<int, List<Phone>>> phonesTask = db.GetPhones();
+                Task<Dictionary<int, Street>> streetsTask = db.GetStreets();
+                Task<Dictionary<int, Address>> addressesTask = db.GetAddresses();
+
+                await Task.WhenAll(abonentsTask, phonesTask, streetsTask, addressesTask);
+
+                List<Abonent> abonents = abonentsTask.Result;
+                Dictionary<int, List<Phone>> phones = phonesTask.Result;
+                Dictionary<int, Street> streets = streetsTask.Result;
+                Dictionary<int, Address> addresses = addressesTask.Result;
+
+                aTable = new AbonentsTable(abonents, phones, streets, addresses);
+                sTable = new StreetsTable(streets, addresses);
+
                 AbonentsTable = aTable.GetTable();
-            });
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show($"Не удалось загрузить данные: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void OpenSearchByNumberWindow()
@@ -115,9 +128,9 @@ namespace TelephoneCompanySubscribers.ViewModel
             }
         }
 
-        private void HandleAbonentsTableUpdated(AbonentsTable updatedTable)
+        private void HandleAbonentsTableUpdated()
         {
-            AbonentsTable = updatedTable.GetFilteredTable();
+            AbonentsTable = aTable.GetTable();
         }
 
         private void OpenStreetsWindow()
@@ -136,19 +149,31 @@ namespace TelephoneCompanySubscribers.ViewModel
 
         private void ExportCSV()
         {
-            ISaveFile strategy = new SaveCSV();
-            SaveFile saveFile = new SaveFile(strategy);
-            saveFile.Save(aTable);
+            try
+            {
+                ISaveFile strategy = new SaveCSV();
+                SaveFile saveFile = new SaveFile(strategy);
+                saveFile.Save(aTable);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show($"Не удалось сохранить данные: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void Sorting()
         {
-            aTable.SortTable(sortColumn, sortDirection);
+            aTable.SortTable(SortColumn, SortDirection);
 
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                AbonentsTable = aTable.GetTable();
-            });
+            AbonentsTable = aTable.GetTable();
+        }
+
+        private void Cancel()
+        {
+            aTable.CancelFilter();
+            aTable.SortTable(SortColumn, SortDirection);
+
+            AbonentsTable = aTable.GetTable();
         }
     }
 }

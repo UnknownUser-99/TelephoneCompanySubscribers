@@ -13,10 +13,38 @@ namespace TelephoneCompanySubscribers.Model
         private DataTable abonentsTable;
         private DataTable filteredTable;
 
+        private bool filtered;
+
         public AbonentsTable(List<Abonent> abonents, Dictionary<int, List<Phone>> phones, Dictionary<int, Street> streets, Dictionary<int, Address> addresses)
         {
             abonentsTable = new DataTable();
 
+            CreateTable(abonents, phones, streets, addresses);
+            SortTable("FullName", "ASC");
+
+            filtered = false;
+        }
+
+        public DataTable GetTable()
+        {
+            if (filtered == false)
+            {
+                return abonentsTable;
+            }
+            else
+            {
+                return filteredTable;
+            }
+        }
+
+        public void CancelFilter()
+        {
+            filtered = false;
+            filteredTable.Clear();
+        }
+
+        private void CreateTable(List<Abonent> abonents, Dictionary<int, List<Phone>> phones, Dictionary<int, Street> streets, Dictionary<int, Address> addresses)
+        {
             abonentsTable.Columns.Add("FullName");
             abonentsTable.Columns.Add("Street");
             abonentsTable.Columns.Add("Home");
@@ -24,27 +52,6 @@ namespace TelephoneCompanySubscribers.Model
             abonentsTable.Columns.Add("WorkNumber");
             abonentsTable.Columns.Add("MobileNumber");
 
-            CreateTable(abonents, phones, streets, addresses);
-            SortTable("FullName", "ASC");
-        }
-
-        public AbonentsTable(DataTable abonentsTable)
-        {
-            this.abonentsTable = abonentsTable;
-        }
-
-        public DataTable GetTable()
-        {
-            return abonentsTable;
-        }
-
-        public DataTable GetFilteredTable()
-        {
-            return filteredTable;
-        }
-
-        private void CreateTable(List<Abonent> abonents, Dictionary<int, List<Phone>> phones, Dictionary<int, Street> streets, Dictionary<int, Address> addresses)
-        {
             foreach (Abonent abonent in abonents)
             {
                 DataRow row = abonentsTable.NewRow();
@@ -103,6 +110,8 @@ namespace TelephoneCompanySubscribers.Model
             if (filteredTable.Rows.Count > 0)
             {
                 result = true;
+
+                filtered = true;
             }
 
             this.filteredTable = filteredTable;
@@ -112,11 +121,18 @@ namespace TelephoneCompanySubscribers.Model
 
         public void SortTable(string column, string direction)
         {
-            DataView view = abonentsTable.DefaultView;
+            DataView view = GetTable().DefaultView;
 
             view.Sort = $"{column} {direction}";
 
-            abonentsTable = view.ToTable();
+            if (filtered == false)
+            {
+                abonentsTable = view.ToTable();
+            }
+            else
+            {
+                filteredTable = view.ToTable();
+            }
         }
     }
 }

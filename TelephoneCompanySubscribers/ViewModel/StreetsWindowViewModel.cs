@@ -30,10 +30,7 @@ namespace TelephoneCompanySubscribers.ViewModel
 
         private void LoadData(StreetsTable streetsTable)
         {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                StreetsTable = streetsTable.GetTable();
-            });
+            StreetsTable = streetsTable.GetTable();
         }
     }
 }

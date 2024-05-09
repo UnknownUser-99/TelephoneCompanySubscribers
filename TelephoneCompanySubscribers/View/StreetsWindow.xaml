@@ -15,10 +15,15 @@
 
         <TextBlock Text="STREETS" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Margin="10" />
 
-        <DataGrid ItemsSource="{Binding StreetsTable}" AutoGenerateColumns="False" Margin="10" Grid.Row="1" IsReadOnly="True">
+        <DataGrid ItemsSource="{Binding StreetsTable}" AutoGenerateColumns="False" Margin="10" Grid.Row="1" FontSize="16" IsReadOnly="True">
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Улица" Binding="{Binding Path=Street}" />
-                <DataGridTextColumn Header="Количество абонентов" Binding="{Binding Path=Abonents}" />
+                <DataGridTextColumn Header="Улица" Binding="{Binding Path=Street}" Width="*" />
+                <DataGridTextColumn Header="Количество абонентов" Binding="{Binding Path=Abonents}" Width="*" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

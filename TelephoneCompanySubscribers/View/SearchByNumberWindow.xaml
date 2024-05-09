@@ -16,7 +16,7 @@
         
         <TextBlock Text="SEARCH BY NUMBER" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Margin="10" />
 
-        <TextBox Grid.Row="1" Text="{Binding PhoneNumber}" FontSize="16" TextAlignment="Center" Margin="10" HorizontalAlignment="Center" Width="200" />
+        <TextBox Grid.Row="1" Text="{Binding PhoneNumber}" FontSize="18" TextAlignment="Center" Margin="10" HorizontalAlignment="Center" Width="200" />
 
         <Button Grid.Row="2" Content="Найти номер" Command="{Binding SearchByNumberCommand}" Margin="10" HorizontalAlignment="Center" Width="120" FontSize="18" />
     </Grid>

@@ -24,6 +24,13 @@ namespace TelephoneCompanySubscribers.Model
             connectionString = config["ConnectionStrings:DefaultConnection"];
         }
 
+        /*
+        public async Task<(List<Abonent>, Dictionary<int, List<Phone>>, Dictionary<int, Street>, Dictionary<int, Address>)> GetAllData()
+        {
+            //QueryMultipleAsync
+        }
+        */
+
         public async Task<List<Abonent>> GetAbonents()
         {
             using (IDbConnection dbConnection = new SqlConnection(connectionString))
