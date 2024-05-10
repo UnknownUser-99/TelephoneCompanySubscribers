@@ -9,12 +9,15 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using TelephoneCompanySubscribers.Model;
+using TelephoneCompanySubscribers.View;
 
 namespace TelephoneCompanySubscribers.ViewModel
 {
     public class SearchByNumberWindowViewModel : ViewModelBase
     {
         public ICommand SearchByNumberCommand { get; private set; }
+
+        private ErrorWindow errorWindow;
 
         public event Action AbonentsTableUpdated;
 
@@ -49,13 +52,29 @@ namespace TelephoneCompanySubscribers.ViewModel
             }
             else
             {
-                MessageBox.Show($"Не удалось найти введённый номер {phoneNumber}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                string errorMessage = $"Не удалось найти введённый номер {phoneNumber}";
+
+                OpenErrorWindow(errorMessage);
             }
         }
 
         private void UpdateTable()
         {
             AbonentsTableUpdated();
+        }
+
+        private void OpenErrorWindow(string errorMessage)
+        {
+            if (errorWindow == null)
+            {
+                errorWindow = new ErrorWindow(new ErrorWindowViewModel(errorMessage));
+                errorWindow.Closed += (sender, args) => errorWindow = null;
+                errorWindow.Show();
+            }
+            else
+            {
+                errorWindow.Activate();
+            }
         }
     }
 }
