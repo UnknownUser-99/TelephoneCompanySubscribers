@@ -24,12 +24,23 @@ namespace TelephoneCompanySubscribers.Model
             connectionString = config["ConnectionStrings:DefaultConnection"];
         }
 
-        /*
+        
         public async Task<(List<Abonent>, Dictionary<int, List<Phone>>, Dictionary<int, Street>, Dictionary<int, Address>)> GetAllData()
         {
-            //QueryMultipleAsync
+            using (IDbConnection dbConnection = new SqlConnection(connectionString))
+            {
+                using (var multi = await dbConnection.QueryMultipleAsync("SELECT * FROM Abonents; SELECT * FROM Phones; SELECT * FROM Streets; SELECT * FROM Addresses;"))
+                {
+                    var abonents = (await multi.ReadAsync<Abonent>()).AsList();
+                    var phones = (await multi.ReadAsync<Phone>()).GroupBy(phone => phone.AbonentID).ToDictionary(group => group.Key, group => group.ToList());
+                    var streets = (await multi.ReadAsync<Street>()).ToDictionary(street => street.StreetID, street => street);
+                    var addresses = (await multi.ReadAsync<Address>()).GroupBy(address => address.AbonentID).ToDictionary(group => group.Key, group => group.Single());
+
+                    return (abonents, phones, streets, addresses);
+                }
+            }
         }
-        */
+        
 
         public async Task<List<Abonent>> GetAbonents()
         {

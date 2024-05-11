@@ -27,6 +27,7 @@ namespace TelephoneCompanySubscribers.ViewModel
 
         private SearchByNumberWindow searchByNumberWindow;
         private StreetsWindow streetsWindow;
+        private ErrorWindow errorWindow;
 
         private AbonentsTable aTable;
         private StreetsTable sTable;
@@ -90,17 +91,7 @@ namespace TelephoneCompanySubscribers.ViewModel
             {
                 Database db = new Database();
 
-                Task<List<Abonent>> abonentsTask = db.GetAbonents();
-                Task<Dictionary<int, List<Phone>>> phonesTask = db.GetPhones();
-                Task<Dictionary<int, Street>> streetsTask = db.GetStreets();
-                Task<Dictionary<int, Address>> addressesTask = db.GetAddresses();
-
-                await Task.WhenAll(abonentsTask, phonesTask, streetsTask, addressesTask);
-
-                List<Abonent> abonents = abonentsTask.Result;
-                Dictionary<int, List<Phone>> phones = phonesTask.Result;
-                Dictionary<int, Street> streets = streetsTask.Result;
-                Dictionary<int, Address> addresses = addressesTask.Result;
+                (List<Abonent> abonents, Dictionary<int, List<Phone>> phones, Dictionary<int, Street> streets, Dictionary<int, Address> addresses) = await db.GetAllData();
 
                 aTable = new AbonentsTable(abonents, phones, streets, addresses);
                 sTable = new StreetsTable(streets, addresses);
@@ -109,7 +100,9 @@ namespace TelephoneCompanySubscribers.ViewModel
             }
             catch(Exception ex)
             {
-                MessageBox.Show($"Не удалось загрузить данные: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                string errorMessage = $"Не удалось загрузить данные: {ex.Message}";
+
+                OpenErrorWindow(errorMessage);
             }
         }
 
@@ -157,7 +150,9 @@ namespace TelephoneCompanySubscribers.ViewModel
             }
             catch(Exception ex)
             {
-                MessageBox.Show($"Не удалось сохранить данные: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                string errorMessage = $"Не удалось сохранить данные: {ex.Message}";
+
+                OpenErrorWindow(errorMessage);
             }
         }
 
@@ -174,6 +169,20 @@ namespace TelephoneCompanySubscribers.ViewModel
             aTable.SortTable(SortColumn, SortDirection);
 
             AbonentsTable = aTable.GetTable();
+        }
+
+        private void OpenErrorWindow(string errorMessage)
+        {
+            if (errorWindow == null)
+            {
+                errorWindow = new ErrorWindow(new ErrorWindowViewModel(errorMessage));
+                errorWindow.Closed += (sender, args) => errorWindow = null;
+                errorWindow.Show();
+            }
+            else
+            {
+                errorWindow.Activate();
+            }
         }
     }
 }
